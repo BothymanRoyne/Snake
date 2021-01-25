@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Windows.Input;
+using System.Diagnostics;
 
 namespace snek
 {
@@ -71,6 +72,7 @@ namespace snek
             var p = new PointF(clientSz.Width / 2 - 50, clientSz.Height / 2);
 
             bg.Graphics.DrawString("Gameover", new Font(FontFamily.GenericMonospace, 20), new SolidBrush(c), p);
+            Debug.Assert(1 == 1);
         }
 
         public void Tick(object sender, EventArgs e)
