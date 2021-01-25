@@ -1,0 +1,9 @@
+C:\code\Snake\Snake\bin\Debug\snek.exe.config
+C:\code\Snake\Snake\bin\Debug\snek.exe
+C:\code\Snake\Snake\bin\Debug\snek.pdb
+C:\code\Snake\Snake\obj\Debug\Snake.csprojAssemblyReference.cache
+C:\code\Snake\Snake\obj\Debug\snek.Properties.Resources.resources
+C:\code\Snake\Snake\obj\Debug\Snake.csproj.GenerateResource.cache
+C:\code\Snake\Snake\obj\Debug\Snake.csproj.CoreCompileInputs.cache
+C:\code\Snake\Snake\obj\Debug\snek.exe
+C:\code\Snake\Snake\obj\Debug\snek.pdb
