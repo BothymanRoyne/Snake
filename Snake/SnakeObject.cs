@@ -63,15 +63,12 @@ namespace snek
                     break;
             }
 
-            //foreach (GameObject s in Body)
-            //{
-                Body.Add(new SnakeObject(Head.Position, Head.Color));
-                Head.Position.X += DeltaX;
-                Head.Position.Y += DeltaY;
-                Body.RemoveAt(0);
-                Body.ForEach(s => g.FillRectangle(new SolidBrush(Color), s.Position.X, s.Position.Y, Size.Width, Size.Height));
+            Body.Add(new SnakeObject(Head.Position, Head.Color));
+            Head.Position.X += DeltaX;
+            Head.Position.Y += DeltaY;
+            Body.RemoveAt(0);
+            Body.ForEach(s => g.FillRectangle(new SolidBrush(Color), s.Position.X, s.Position.Y, Size.Width, Size.Height));
 
-            //}
 
 
             // use CurrentHeading from here on out
