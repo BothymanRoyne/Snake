@@ -10,20 +10,22 @@ namespace snek
     internal class SnakeObject : GameObject
     {
         public Size Size = new Size(10, 10); //size of one segment of our snake
+        public List<GameObject> Body = new List<GameObject>();
+        public GameObject Head => Body.Last();
 
         public Heading CurrentHeading { get; internal set; }
 
         public SnakeObject(Point pos, Color col) : base(pos, col)
         {
-
+            Body.Add(new GameObject(pos, col));
         }
 
-        public override void Render(Graphics g)
+        public void Render(Graphics g)
         {
             g.FillRectangle(new SolidBrush(Color), Position.X, Position.Y, Size.Width, Size.Height);
         }
 
-        public void Tick(Size sz, Heading newHeading)
+        public void Tick(Size sz, Heading newHeading, Graphics g)
         {
             if (newHeading != Heading.None)
             {
@@ -61,6 +63,16 @@ namespace snek
                     break;
             }
 
+            //foreach (GameObject s in Body)
+            //{
+                Body.Add(new SnakeObject(Head.Position, Head.Color));
+                Head.Position.X += DeltaX;
+                Head.Position.Y += DeltaY;
+                Body.RemoveAt(0);
+                Body.ForEach(s => g.FillRectangle(new SolidBrush(Color), s.Position.X, s.Position.Y, Size.Width, Size.Height));
+
+            //}
+
 
             // use CurrentHeading from here on out
             // CurrentHeading == Heading.Left
@@ -70,14 +82,12 @@ namespace snek
             //else if (Position.X + DeltaX >= sz.Width)
             //    Position.X = 0;
             //else
-                Position.X += DeltaX;
 
             //if (Position.Y + DeltaY < 0)
             //    Position.Y = sz.Height;
             //else if (Position.Y + DeltaY >= sz.Height)
             //    Position.Y = 0;
             //else
-                Position.Y += DeltaY;
 
         }
 

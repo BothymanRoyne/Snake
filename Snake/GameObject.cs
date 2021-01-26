@@ -8,7 +8,7 @@ using System.Drawing.Drawing2D;
 
 namespace snek
 {
-    public abstract class GameObject
+    internal class GameObject
     {
         public Point Position;
         public Color Color;
@@ -36,7 +36,7 @@ namespace snek
         //    return gp;
         //}
 
-        public abstract void Render(Graphics g);
+        //public abstract void Render(Graphics g);
 
     }
 }

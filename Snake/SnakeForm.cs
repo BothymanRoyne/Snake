@@ -22,6 +22,7 @@ namespace snek
         private readonly int CellSize = 10;
         private readonly Timer Timer;
 
+
         public SnakeForm()
         {
             InitializeComponent();
@@ -35,7 +36,18 @@ namespace snek
             KeyDown += SnakeForm_KeyDown;
 
             SnakeGuy = new SnakeObject(new Point(ClientSize.Width / 2 - 10, ClientSize.Height / 2 + 5), Color.Red);
+
+            SnakeGuy.Body.Add(new SnakeObject(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
+            SnakeGuy.Body.Add(new SnakeObject(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
+            SnakeGuy.Body.Add(new SnakeObject(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
+
+            //Snake.Add(new SnakeObject(new Point(ClientSize.Width / 2 - 10, ClientSize.Height / 2 + 5), Color.Red));
             NumCells = (Size.Width / CellSize) * (Size.Height / CellSize);
+        }
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+
         }
 
         private void SnakeForm_KeyDown(object sender, KeyEventArgs e)
@@ -57,6 +69,8 @@ namespace snek
             }
         }
 
+
+
         private void DrawGrid(BufferedGraphics bg, Color c, int numCells, int cellSize)
         {
             var pen = new Pen(new SolidBrush(c));
@@ -72,7 +86,6 @@ namespace snek
             var p = new PointF(clientSz.Width / 2 - 50, clientSz.Height / 2);
 
             bg.Graphics.DrawString("Gameover", new Font(FontFamily.GenericMonospace, 20), new SolidBrush(c), p);
-            Debug.Assert(1 == 1);
         }
 
         public void Tick(object sender, EventArgs e)
@@ -83,21 +96,40 @@ namespace snek
                 bg.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 bg.Graphics.Clear(Color.Black);
 
-                DrawGrid(bg, Color.White, NumCells, CellSize);
+                DrawGrid(bg, Color.DarkSlateGray, NumCells, CellSize);
 
-                SnakeGuy.Tick(ClientSize, CurrentHeading);
+                SnakeGuy.Tick(ClientSize, CurrentHeading, bg.Graphics);
+                //Snake.ForEach(s => s.Tick(ClientSize, CurrentHeading));
 
-                if (SnakeGuy.Position.X <= 0 ||
-                    SnakeGuy.Position.X >= ClientRectangle.Width ||
-                    SnakeGuy.Position.Y <= 0 || 
-                    SnakeGuy.Position.Y >= ClientRectangle.Height)
-                {
-                    Timer.Stop();
-                    bg.Graphics.Clear(Color.Black);
-                    Gameover(bg, Color.White, ClientSize);
-                }
+                //foreach (var s in Snake)
+                //{
+                //    //if (SnakeGuy.Position.X <= 0 ||
+                //    //    SnakeGuy.Position.X >= ClientRectangle.Width ||
+                //    //    SnakeGuy.Position.Y <= 0 || 
+                //    //    SnakeGuy.Position.Y >= ClientRectangle.Height)
+                //    //{
+                //    //    Timer.Stop();
+                //    //    bg.Graphics.Clear(Color.Black);
+                //    //    Gameover(bg, Color.White, ClientSize);
+                //    //}
+                //    if (s.Position.X <= 0 ||
+                //        s.Position.X >= ClientRectangle.Width ||
+                //        s.Position.Y <= 0 ||
+                //        s.Position.Y >= ClientRectangle.Height)
+                //    {
+                //        Timer.Stop();
+                //        bg.Graphics.Clear(Color.Black);
+                //        Gameover(bg, Color.White, ClientSize);
+                //    }
+                //}
 
-                SnakeGuy.Render(bg.Graphics);
+
+                //SnakeGuy.Render(bg.Graphics);
+                //foreach (var s in Snake)
+                //{
+                //    s.Render(bg.Graphics);
+                //}
+                //Snake.ForEach(s => s.Render(bg.Graphics));
 
                 bg.Render();
             }
