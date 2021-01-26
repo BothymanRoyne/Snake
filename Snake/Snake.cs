@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace snek
 {
-    internal class SnakeObject : GameObject
+    internal class Snake : Entity
     {
         public Size Size = new Size(10, 10); //size of one segment of our snake
-        public List<GameObject> Body = new List<GameObject>();
-        public GameObject Head => Body.Last();
+        public List<Entity> Body = new List<Entity>();
+        public Entity Head => Body.Last();
 
         public Heading CurrentHeading { get; internal set; }
 
-        public SnakeObject(Point pos, Color col) : base(pos, col)
+        public Snake(Point p, Color c) : base(p, c)
         {
-            Body.Add(new GameObject(pos, col));
+            Body.Add(new Entity(p, c));
         }
 
         public void Render(Graphics g)
@@ -25,7 +25,7 @@ namespace snek
             g.FillRectangle(new SolidBrush(Color), Position.X, Position.Y, Size.Width, Size.Height);
         }
 
-        public void Tick(Size sz, Heading newHeading, Graphics g)
+        public void Tick(Heading newHeading, Graphics g)
         {
             if (newHeading != Heading.None)
             {
@@ -63,7 +63,7 @@ namespace snek
                     break;
             }
 
-            Body.Add(new SnakeObject(Head.Position, Head.Color));
+            Body.Add(new Snake(Head.Position, Head.Color));
             Head.Position.X += DeltaX;
             Head.Position.Y += DeltaY;
             Body.RemoveAt(0);

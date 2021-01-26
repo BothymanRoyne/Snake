@@ -17,10 +17,11 @@ namespace snek
     {
         public GraphicsPath Model { get; set; }
         public Heading CurrentHeading { get; set; } = Extensions.RandomEnumValue<Heading>();
-        private readonly SnakeObject SnakeGuy;
+        private readonly Snake SnakeGuy;
         private readonly int NumCells;
         private readonly int CellSize = 10;
         private readonly Timer Timer;
+        private int Interval = 100;
 
 
         public SnakeForm()
@@ -30,16 +31,17 @@ namespace snek
             Timer = new Timer();
             Timer.Tick += Tick;
             Timer.Enabled = true;
-            Timer.Interval = 100;
+            Timer.Interval = Interval;
             Timer.Start();
 
             KeyDown += SnakeForm_KeyDown;
 
-            SnakeGuy = new SnakeObject(new Point(ClientSize.Width / 2 - 10, ClientSize.Height / 2 + 5), Color.Red);
+            SnakeGuy = new Snake(new Point(ClientSize.Width / 2 - 10, ClientSize.Height / 2 + 5), Color.Red);
 
-            SnakeGuy.Body.Add(new SnakeObject(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
-            SnakeGuy.Body.Add(new SnakeObject(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
-            SnakeGuy.Body.Add(new SnakeObject(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
+            //testing
+            SnakeGuy.Body.Add(new Snake(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
+            SnakeGuy.Body.Add(new Snake(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
+            SnakeGuy.Body.Add(new Snake(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
 
             //Snake.Add(new SnakeObject(new Point(ClientSize.Width / 2 - 10, ClientSize.Height / 2 + 5), Color.Red));
             NumCells = (Size.Width / CellSize) * (Size.Height / CellSize);
@@ -69,8 +71,6 @@ namespace snek
             }
         }
 
-
-
         private void DrawGrid(BufferedGraphics bg, Color c, int numCells, int cellSize)
         {
             var pen = new Pen(new SolidBrush(c));
@@ -98,38 +98,20 @@ namespace snek
 
                 DrawGrid(bg, Color.DarkSlateGray, NumCells, CellSize);
 
-                SnakeGuy.Tick(ClientSize, CurrentHeading, bg.Graphics);
-                //Snake.ForEach(s => s.Tick(ClientSize, CurrentHeading));
+                SnakeGuy.Tick(CurrentHeading, bg.Graphics);
 
-                //foreach (var s in Snake)
-                //{
-                //    //if (SnakeGuy.Position.X <= 0 ||
-                //    //    SnakeGuy.Position.X >= ClientRectangle.Width ||
-                //    //    SnakeGuy.Position.Y <= 0 || 
-                //    //    SnakeGuy.Position.Y >= ClientRectangle.Height)
-                //    //{
-                //    //    Timer.Stop();
-                //    //    bg.Graphics.Clear(Color.Black);
-                //    //    Gameover(bg, Color.White, ClientSize);
-                //    //}
-                //    if (s.Position.X <= 0 ||
-                //        s.Position.X >= ClientRectangle.Width ||
-                //        s.Position.Y <= 0 ||
-                //        s.Position.Y >= ClientRectangle.Height)
-                //    {
-                //        Timer.Stop();
-                //        bg.Graphics.Clear(Color.Black);
-                //        Gameover(bg, Color.White, ClientSize);
-                //    }
-                //}
-
-
-                //SnakeGuy.Render(bg.Graphics);
-                //foreach (var s in Snake)
-                //{
-                //    s.Render(bg.Graphics);
-                //}
-                //Snake.ForEach(s => s.Render(bg.Graphics));
+                //i think the form should be checking where the snake is as the snake shouldn't care where it is
+                //because then it would need to know form information
+                //thoughts?
+                if (SnakeGuy.Head.Position.X <= 0 ||
+                    SnakeGuy.Head.Position.X >= ClientRectangle.Width ||
+                    SnakeGuy.Head.Position.Y <= 0 ||
+                    SnakeGuy.Head.Position.Y >= ClientRectangle.Height)
+                {
+                    Timer.Stop();
+                    bg.Graphics.Clear(Color.Black);
+                    Gameover(bg, Color.White, ClientSize);
+                }
 
                 bg.Render();
             }
