@@ -15,13 +15,15 @@ namespace snek
 {
     public partial class SnakeForm : Form
     {
+        public static Random Random = new Random();
         public GraphicsPath Model { get; set; }
         public Heading CurrentHeading { get; set; } = Extensions.RandomEnumValue<Heading>();
         private readonly Snake SnakeGuy;
         private readonly int NumCells;
         private readonly int CellSize = 10;
         private readonly Timer Timer;
-        private int Interval = 100;
+        private readonly int Interval = 100;
+        private Apple Apple;
 
 
         public SnakeForm()
@@ -39,17 +41,15 @@ namespace snek
             SnakeGuy = new Snake(new Point(ClientSize.Width / 2 - 10, ClientSize.Height / 2 + 5), Color.Red);
 
             //testing
-            SnakeGuy.Body.Add(new Snake(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
-            SnakeGuy.Body.Add(new Snake(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
-            SnakeGuy.Body.Add(new Snake(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
+            //SnakeGuy.Body.Add(new Snake(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
+            //SnakeGuy.Body.Add(new Snake(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
+            //SnakeGuy.Body.Add(new Snake(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
 
             //Snake.Add(new SnakeObject(new Point(ClientSize.Width / 2 - 10, ClientSize.Height / 2 + 5), Color.Red));
             NumCells = (Size.Width / CellSize) * (Size.Height / CellSize);
-        }
 
-        private void OnKeyDown(object sender, KeyEventArgs e)
-        {
-
+            //spawn initial food
+            Apple = new Apple(new Point(Random.Next(0, ClientSize.Width / CellSize) * 10, Random.Next(0, ClientSize.Height / CellSize) * 10), Color.Green);
         }
 
         private void SnakeForm_KeyDown(object sender, KeyEventArgs e)
@@ -100,17 +100,32 @@ namespace snek
 
                 SnakeGuy.Tick(CurrentHeading, bg.Graphics);
 
-                //i think the form should be checking where the snake is as the snake shouldn't care where it is
-                //because then it would need to know form information
-                //thoughts?
+                Apple.Render(bg.Graphics);
+
+                //collision between snake and borders
                 if (SnakeGuy.Head.Position.X <= 0 ||
                     SnakeGuy.Head.Position.X >= ClientRectangle.Width ||
-                    SnakeGuy.Head.Position.Y <= 0 ||
+                    SnakeGuy.Head.Position.Y <= -1 ||
                     SnakeGuy.Head.Position.Y >= ClientRectangle.Height)
                 {
                     Timer.Stop();
                     bg.Graphics.Clear(Color.Black);
                     Gameover(bg, Color.White, ClientSize);
+                }
+
+                //collision between snake and body
+                if (SnakeGuy.Body.Any(segment => !(SnakeGuy.Head.Position.X == segment.Position.X || SnakeGuy.Head.Position.Y == segment.Position.Y)))
+                {
+                    Timer.Stop();
+                    bg.Graphics.Clear(Color.Black);
+                    Gameover(bg, Color.White, ClientSize);
+                }
+
+
+                if (SnakeGuy.Head.Position.X == Apple.Position.X && SnakeGuy.Head.Position.Y == Apple.Position.Y)
+                {
+                    SnakeGuy.Body.Add(new Snake(SnakeGuy.Body.Last().Position, Color.Red));
+                    Apple = new Apple(new Point(Random.Next(0, ClientSize.Width / CellSize) * 10, Random.Next(0, ClientSize.Height / CellSize) * 10), Color.Green);
                 }
 
                 bg.Render();

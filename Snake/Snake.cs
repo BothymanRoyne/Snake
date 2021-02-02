@@ -9,10 +9,8 @@ namespace snek
 {
     internal class Snake : Entity
     {
-        public Size Size = new Size(10, 10); //size of one segment of our snake
         public List<Entity> Body = new List<Entity>();
         public Entity Head => Body.Last();
-
         public Heading CurrentHeading { get; internal set; }
 
         public Snake(Point p, Color c) : base(p, c)
@@ -37,10 +35,7 @@ namespace snek
                 if (newHeading == Heading.Up && CurrentHeading == Heading.Down) isValid = false;
                 if (newHeading == Heading.Down && CurrentHeading == Heading.Up) isValid = false;
 
-                if (isValid)
-                {
-                    CurrentHeading = newHeading;
-                }
+                if (isValid) CurrentHeading = newHeading;
             }
             
             switch (CurrentHeading)
@@ -68,25 +63,6 @@ namespace snek
             Head.Position.Y += DeltaY;
             Body.RemoveAt(0);
             Body.ForEach(s => g.FillRectangle(new SolidBrush(Color), s.Position.X, s.Position.Y, Size.Width, Size.Height));
-
-
-
-            // use CurrentHeading from here on out
-            // CurrentHeading == Heading.Left
-
-            //if (Position.X + DeltaX < 0)
-            //    Position.X = sz.Width;
-            //else if (Position.X + DeltaX >= sz.Width)
-            //    Position.X = 0;
-            //else
-
-            //if (Position.Y + DeltaY < 0)
-            //    Position.Y = sz.Height;
-            //else if (Position.Y + DeltaY >= sz.Height)
-            //    Position.Y = 0;
-            //else
-
         }
-
     }
 }

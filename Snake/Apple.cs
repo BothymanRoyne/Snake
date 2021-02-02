@@ -14,6 +14,9 @@ namespace snek
 
         }
 
-
+        internal void Render(Graphics g)
+        {
+            g.FillRectangle(new SolidBrush(Color), Position.X, Position.Y, Size.Width, Size.Height);
+        }
     }
 }

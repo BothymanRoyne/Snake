@@ -12,9 +12,10 @@ namespace snek
     {
         public Point Position;
         public Color Color;
+        public Size Size = new Size(10, 10);                 //size of one segment of our snake
         public int DeltaX { get; set; }                      //amount traveled in X axis per tick
         public int DeltaY { get; set; }                      //amount traveled in Y axis per tick
-        public int Speed { get; set; } = 10;                       //speed of shape
+        public static int Speed { get; set; } = 10;                       //speed of shape
         public float Acceleration { get; set; } = 0.05f;       //acceleration of shape
 
         public Entity(Point p, Color c)
