@@ -12,11 +12,25 @@ namespace snek
         public List<Entity> Body = new List<Entity>();
         public Entity Head => Body.Last();
         public Heading CurrentHeading { get; internal set; }
+        public int UpdateDelay { get; set; } = 10;
+        private int _updateCount { get; set; } = 0;
+        public bool AteApple { get; internal set; }
 
         public Snake(Point p, Color c) : base(p, c)
         {
             Body.Add(new Entity(p, c));
         }
+
+        public override bool Equals(object obj)
+        {
+            Snake s = (obj as Snake);
+
+            if (Position == s.Position)
+                return true;
+            return false;
+        }
+
+        public override int GetHashCode() => base.GetHashCode();
 
         public void Render(Graphics g)
         {
@@ -58,10 +72,17 @@ namespace snek
                     break;
             }
 
-            Body.Add(new Snake(Head.Position, Head.Color));
-            Head.Position.X += DeltaX;
-            Head.Position.Y += DeltaY;
-            Body.RemoveAt(0);
+            _updateCount++;
+            if (_updateCount >= UpdateDelay)
+            {
+                _updateCount = 0;
+                Body.Add(new Snake(Head.Position, Head.Color));
+                Head.Position.X += DeltaX;
+                Head.Position.Y += DeltaY;
+                if (!AteApple)
+                    Body.RemoveAt(0);
+                AteApple = false;
+            }
             Body.ForEach(s => g.FillRectangle(new SolidBrush(Color), s.Position.X, s.Position.Y, Size.Width, Size.Height));
         }
     }

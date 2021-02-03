@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace snek
 {
@@ -11,5 +12,9 @@ namespace snek
             return (T)v.GetValue(_R.Next(v.Length));
         }
 
+        internal static double GetDistance(this Point p, Point q)
+        {
+            return Math.Sqrt(Math.Pow((q.X - p.X), 2) + Math.Pow((q.Y - p.Y), 2));
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace snek
         private readonly int NumCells;
         private readonly int CellSize = 10;
         private readonly Timer Timer;
-        private readonly int Interval = 100;
+        private readonly int Interval = 10;
         private Apple Apple;
 
 
@@ -30,26 +30,26 @@ namespace snek
         {
             InitializeComponent();
 
+            //ClientSize = new Size(400, 400);
+
             Timer = new Timer();
             Timer.Tick += Tick;
-            Timer.Enabled = true;
             Timer.Interval = Interval;
             Timer.Start();
 
+            //handle input
             KeyDown += SnakeForm_KeyDown;
 
+            //spawn in middle of screen
             SnakeGuy = new Snake(new Point(ClientSize.Width / 2 - 10, ClientSize.Height / 2 + 5), Color.Red);
 
-            //testing
-            //SnakeGuy.Body.Add(new Snake(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
-            //SnakeGuy.Body.Add(new Snake(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
-            //SnakeGuy.Body.Add(new Snake(new Point(ClientSize.Width / 2, ClientSize.Height / 2 + 5), Color.Green));
-
-            //Snake.Add(new SnakeObject(new Point(ClientSize.Width / 2 - 10, ClientSize.Height / 2 + 5), Color.Red));
+            //determine number of cells in the grid
             NumCells = (Size.Width / CellSize) * (Size.Height / CellSize);
 
             //spawn initial food
             Apple = new Apple(new Point(Random.Next(0, ClientSize.Width / CellSize) * 10, Random.Next(0, ClientSize.Height / CellSize) * 10), Color.Green);
+
+            SnakeGuy.Body = CreateSnake(1);
         }
 
         private void SnakeForm_KeyDown(object sender, KeyEventArgs e)
@@ -71,6 +71,16 @@ namespace snek
             }
         }
 
+        private List<Entity> CreateSnake(int size)
+        {
+            var snake = new List<Entity>();
+
+            for (int i = 0; i < size; i++)
+                snake.Add(new Snake(new Point(SnakeGuy.Head.Position.X + i * CellSize, SnakeGuy.Head.Position.Y), Color.Red));
+
+            return snake;
+        }
+
         private void DrawGrid(BufferedGraphics bg, Color c, int numCells, int cellSize)
         {
             var pen = new Pen(new SolidBrush(c));
@@ -86,6 +96,8 @@ namespace snek
             var p = new PointF(clientSz.Width / 2 - 50, clientSz.Height / 2);
 
             bg.Graphics.DrawString("Gameover", new Font(FontFamily.GenericMonospace, 20), new SolidBrush(c), p);
+            bg.Graphics.Clear(Color.Black);
+            Timer.Stop();
         }
 
         public void Tick(object sender, EventArgs e)
@@ -98,35 +110,33 @@ namespace snek
 
                 DrawGrid(bg, Color.DarkSlateGray, NumCells, CellSize);
 
-                SnakeGuy.Tick(CurrentHeading, bg.Graphics);
 
-                Apple.Render(bg.Graphics);
 
-                //collision between snake and borders
-                if (SnakeGuy.Head.Position.X <= 0 ||
+                //handle collision between snake and borders
+                if (SnakeGuy.Head.Position.X < 0 ||
                     SnakeGuy.Head.Position.X >= ClientRectangle.Width ||
-                    SnakeGuy.Head.Position.Y <= -1 ||
+                    SnakeGuy.Head.Position.Y < 0 ||
                     SnakeGuy.Head.Position.Y >= ClientRectangle.Height)
                 {
-                    Timer.Stop();
-                    bg.Graphics.Clear(Color.Black);
                     Gameover(bg, Color.White, ClientSize);
                 }
 
-                //collision between snake and body
-                if (SnakeGuy.Body.Any(segment => !(SnakeGuy.Head.Position.X == segment.Position.X || SnakeGuy.Head.Position.Y == segment.Position.Y)))
+                //handle collision between snake and body
+                foreach (var s in SnakeGuy.Body.Where(x => x != SnakeGuy.Head))
                 {
-                    Timer.Stop();
-                    bg.Graphics.Clear(Color.Black);
-                    Gameover(bg, Color.White, ClientSize);
+                    if (s.Equals(SnakeGuy.Head))
+                        Gameover(bg, Color.White, ClientSize);
                 }
 
-
+                //handle collision between snake and apple
                 if (SnakeGuy.Head.Position.X == Apple.Position.X && SnakeGuy.Head.Position.Y == Apple.Position.Y)
                 {
-                    SnakeGuy.Body.Add(new Snake(SnakeGuy.Body.Last().Position, Color.Red));
+                    SnakeGuy.AteApple = true;
                     Apple = new Apple(new Point(Random.Next(0, ClientSize.Width / CellSize) * 10, Random.Next(0, ClientSize.Height / CellSize) * 10), Color.Green);
                 }
+
+                Apple.Render(bg.Graphics);
+                SnakeGuy.Tick(CurrentHeading, bg.Graphics);
 
                 bg.Render();
             }
